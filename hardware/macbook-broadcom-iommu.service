@@ -1,0 +1,14 @@
+[Unit]
+Description=Apply the MacBook Broadcom Wi-Fi IOMMU workaround
+ConditionKernelVersion=7.3.4+deb13-amd64
+ConditionPathExists=/sys/bus/pci/devices/0000:03:00.0
+After=systemd-udev-trigger.service
+Before=NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/macbook-broadcom-iommu
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
