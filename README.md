@@ -38,7 +38,7 @@ Confirm the model is **MacBookPro14,3** in macOS System Report or run `cat /sys/
 
 Connect wired Ethernet before you begin. You’ll need it to download packages until the built-in Wi-Fi is working. Use a USB Ethernet adapter or a Thunderbolt dock with Ethernet. OWC Thunderbolt docks have worked in our setup. Debian may show the wired interface as `eth0` or under a different name. [OWC Thunderbolt 3 Dock](https://eshop.macsales.com/shop/docks/owc-thunderbolt-3-dock)
 
-Already on Debian 13? Skip to step 2. Otherwise, back up your data, write the **amd64 Debian 13 netinst** image to a USB drive, and start the Mac while holding **Option**. Pick the USB’s **EFI Boot** entry. [Debian installer downloads](https://www.debian.org/distrib/netinst) · [Verify the installer image](https://www.debian.org/CD/verify)
+Already on Debian 13? Skip to step 2. Otherwise, back up your data, write the **amd64 Debian 13 netinst** image to a USB drive with [balenaEtcher](https://etcher.balena.io/) or `dd`. balenaEtcher verifies the write automatically. Start the Mac while holding **Option** and pick the USB’s **EFI Boot** entry. [Debian installer downloads](https://www.debian.org/distrib/netinst) · [Verify the installer image](https://www.debian.org/CD/verify)
 
 If you’re keeping macOS or OpenCore, back up the EFI System Partition too. In Debian’s manual partitioner, reuse the existing EFI partition without formatting it and keep macOS partitions out of the format list. If Debian asks to write a fallback bootloader to the removable-media path, decline to preserve OpenCore’s `EFI/BOOT`. [Debian partitioning guide](https://www.debian.org/releases/trixie/amd64/ch06s03.en.html)
 
@@ -165,7 +165,7 @@ sudo journalctl -k -b -g 'apparmor="DENIED"' --no-pager
 
 - Enable automatic Debian security updates with `sudo apt install unattended-upgrades` and `sudo dpkg-reconfigure unattended-upgrades`. Review Backports kernel updates separately. The setup here targets one exact release, so test the hardware on a newer kernel before relying on it and keep a working GRUB entry for rollback. [Debian security update guidance](https://www.debian.org/doc/manuals/debian-reference/ch02.en)
 - Set up LUKS during installation for Debian’s system, home data, and swap. If you’re dual-booting, apply encryption to the Debian partitions you intend to use. Set a short automatic screen-lock timeout, require your password to unlock, and power off before leaving the laptop unattended for long periods. [Debian installer encryption guide](https://www.debian.org/releases/trixie/amd64/ch06s03.en.html#partman-crypto)
-- If you keep booting macOS, check `csrutil status` on that side too. Review the SIP settings your OpenCore configuration requires before relying on that install for daily use. [Apple’s SIP configuration guide](https://developer.apple.com/documentation/security/disabling-and-enabling-system-integrity-protection)
+- If you keep booting macOS, check `csrutil status` on that side too. Running OpenCore on older Intel Macs with SIP partially disabled is a real risk — AI-assisted exploit tools are lowering the bar for local privilege escalation, and a weakened SIP is an open invitation. If you don’t need macOS, wipe it and reclaim the disk for your encrypted Debian install. If you do need it, re-enable full SIP and remove OpenCore. [Apple’s SIP configuration guide](https://developer.apple.com/documentation/security/disabling-and-enabling-system-integrity-protection)
 
 ## 6. Test suspend and lid close
 
@@ -195,17 +195,22 @@ sudo python3 suspend/thunderbolt-test.py arm &&
   sudo rtcwake -m no -s 45
 ```
 
-After waking, check the suspend log for entry and exit and confirm the controllers returned. Disarm the trial and mask sleep again. The helper applies the Thunderbolt workaround for one suspend at a time.
+After waking, check the suspend log for entry and exit and confirm the controllers returned. Disarm the trial. The helper applies the Thunderbolt workaround for one suspend at a time.
 
 ```bash
 sudo journalctl -k -b -g 'PM: suspend (entry|exit)' --no-pager
 python3 suspend/thunderbolt-test.py check
 sudo rtcwake -m disable
 sudo python3 suspend/thunderbolt-test.py disarm
-sudo systemctl mask sleep.target
 ```
 
-If the laptop hangs, reboot locally, mask sleep again, and check the previous boot with `sudo journalctl -b -1 -u systemd-suspend.service --no-pager`. To revert the GRUB setting, remove `/etc/default/grub.d/99-suspend-trial.cfg`, run `sudo update-grub`, and reboot.
+If both tests pass, unmask sleep for daily use.
+
+```bash
+sudo systemctl unmask sleep.target
+```
+
+If the laptop hangs, reboot locally, mask sleep again with `sudo systemctl mask sleep.target`, and check the previous boot with `sudo journalctl -b -1 -u systemd-suspend.service --no-pager`. To revert the GRUB setting, remove `/etc/default/grub.d/99-suspend-trial.cfg`, run `sudo update-grub`, and reboot.
 
 ## 7. Install optional desktop tools
 
