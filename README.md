@@ -1,5 +1,37 @@
 # Install Debian 13 on a 2017 Intel MacBook Pro
 
+```bash
+        _,met$$$$$gg.          admin@butterfly-dream-17
+     ,g$$$$$$$$$$$$$$$P.       ---------------------------
+   ,g$$P""       """Y$$.".     OS: Debian GNU/Linux 13 (trixie) x86_64
+  ,$$P'              `$$$.     Host: MacBookPro14,3 (1.0)
+',$$P       ,ggs.     `$$b:    Kernel: Linux 7.3.4+deb13-amd64
+`d$$'     ,$P"'   .    $$$     Uptime: 21 mins
+ $$P      d$'     ,    $$P     Packages: 1946 (dpkg), 21 (flatpak-user), 9 (snap)
+ $$:      $$.   -    ,d$$'     Shell: bash 5.2.37
+ $$;      Y$b._   _,d$P'       Display (Color LCD): 2880x1800 @ 60 Hz (as 1648x1030) in 15" [Built-in]
+ Y$$.    `.`"Y$$$$P"'          DE: GNOME 48.7
+ `$$b      "-.__               WM: Mutter (Wayland)
+  `Y$$b                        WM Theme: Adwaita
+   `Y$$.                       Theme: Adwaita [GTK2/3/4]
+     `$$b.                     Icons: Adwaita [GTK2/3/4]
+       `Y$$b.                  Font: Cantarell (11pt) [GTK2/3/4]
+         `"Y$b._               Cursor: Adwaita (24px)
+             `""""             Terminal: /dev/pts/0
+                               CPU: Intel(R) Core(TM) i7-7820HQ (8) @ 3.90 GHz
+                               GPU 1: AMD Radeon RX Graphics [Discrete]
+                               GPU 2: Intel HD Graphics 630 @ 1.10 GHz [Integrated]
+                               Memory: 2.98 GiB / 15.52 GiB (19%)
+                               Swap: 0 B / 15.90 GiB (0%)
+                               Disk (/): 10.82 GiB / 24.02 GiB (45%) - ext4
+                               Disk (/home): 19.96 GiB / 294.78 GiB (7%) - ext4
+                               Disk (/tmp): 240.94 MiB / 2.68 GiB (9%) - ext4
+                               Local IP (enp70s0): 192.168.x.xxx/24
+                               Battery (A1820): 98% [AC Connected]
+                               Locale: en_US.UTF-8
+```
+
+
 Confirm the model is **MacBookPro14,3** in macOS System Report or run `cat /sys/class/dmi/id/product_name` on Linux. Use kernel `7.3.4+deb13-amd64` with these scripts.
 
 ## 1. Start with Debian 13
